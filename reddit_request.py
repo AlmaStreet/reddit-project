@@ -1,5 +1,8 @@
 import requests
 from datetime import datetime
+import ssl
+
+print(ssl.OPENSSL_VERSION)
 
 url = "https://www.reddit.com/r/apple/new.json"
 headers = {"User-Agent": "MyAPI/0.0.1"}
@@ -7,7 +10,6 @@ headers = {"User-Agent": "MyAPI/0.0.1"}
 response = requests.get(url, headers=headers)
 data = response.json()
 
-# title, selftext, author, up, down, ratio, num_comments, url, time
 post_count = 1
 for post in data["data"]["children"]:
     title = post["data"]["title"]
@@ -23,12 +25,14 @@ for post in data["data"]["children"]:
     time = datetime.utcfromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     print(f"\n========== Post {post_count} ==========")
-    print(title)
-    # print(f"\tDescription: {body_text}")
-    print(f"\tBy: {author}")
+    print(f"Title: {title}")
+    if body_text:
+        print(f"Description: {body_text[0:180]}")
+    print(f"By: {author}\n")
     print(f"Vote stats: Up ({up_vote}), Down ({down_vote}), Ratio ({vote_ratio})")
     print(f"Number of comments: {num_comments}")
-    print(f"Attached URL: {url}")
+    if url_link:
+        print(f"Attached URL: {url_link}")
     print(f"timestamp: {time}")
 
     post_count += 1
